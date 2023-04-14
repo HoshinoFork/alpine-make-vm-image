@@ -17,6 +17,7 @@ jobs:
 
       - name: Build image
         run: |
+          ctime=$(date +%Y-%m-%d)
           sudo ./alpine-make-vm-image \
               --image-format qcow2 \
               --image-size 2G \
@@ -25,4 +26,12 @@ jobs:
               --fs-skel-dir example/rootfs \
               --fs-skel-chown root:root \
               --script-chroot \
-              alpine-$(date +%Y-%m-%d).qcow2 -- ./example/configure.sh
+              alpine-${ctime}.qcow2 -- ./example/configure.sh
+          qemu-img convert -f qcow2 -O vmdk -o adapter_type=lsilogic,subformat=monolithicFlat alpine-${ctime}.qcow2 alpine.vmdk
+
+      - name: Upload files to Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: alpine.vmdk
+          path: |
+            ./alpine.vmdk
