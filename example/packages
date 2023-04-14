@@ -5,3 +5,7 @@ less
 logrotate
 openssh
 ssmtp
+bash
+curl
+wget
+nano
